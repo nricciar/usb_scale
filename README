@@ -1,0 +1,5 @@
+A C# class to interface with a USB scale extended from the blog post http://nicholas.piasecki.name/blog/2008/11/reading-a-stamps-com-usb-scale-from-c-sharp/
+
+This class uses Mike O’Brien’s USB HID library, which can be found at: http://github.com/mikeobrien/HidLibrary Current Binaries: http://github.com/mikeobrien/HidLibrary/downloads
+
+See Example.cs on how to use the library.
