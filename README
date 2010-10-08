@@ -3,3 +3,8 @@ A C# class to interface with a USB scale extended from the blog post http://nich
 This class uses Mike O’Brien’s USB HID library, which can be found at: http://github.com/mikeobrien/HidLibrary Current Binaries: http://github.com/mikeobrien/HidLibrary/downloads
 
 See Example.cs on how to use the library.
+
+Tested with the Mettler Toledo PS60 Scale (may work with other Mettler Toledo scales automaticly)
+Should also support the Stamps.com USB Scale
+
+Other scale support should be possible by adding their vendor/product id to the Connect() method in the Scale.cs file.
