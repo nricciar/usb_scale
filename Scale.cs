@@ -14,6 +14,24 @@ namespace ScaleInterface
 
   class USBScale
   {
+    public bool IsConnected
+    {
+      get {
+	return scale == null ? false : scale.IsConnected;
+      }
+    }
+    public decimal ScaleStatus
+    {
+      get {
+	return inData.Data[1];
+      }
+    }
+    public decimal ScaleWeightUnits
+    {
+      get {
+	return inData.Data[2];
+      }
+    }
     private HidDevice scale;
     private HidDeviceData inData;
 
@@ -109,4 +127,3 @@ namespace ScaleInterface
     }
   }
 }
-

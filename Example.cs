@@ -17,13 +17,22 @@ namespace ScaleReader
   {
     public static void Main(string[] args)
     {
+      decimal? weight;
+      bool? isStable;
+
       USBScale s = new USBScale();
       s.Connect();
-      decimal? pounds;
-      bool? isStable;
-      s.GetWeight(out pounds, out isStable);
-      s.DebugScaleData();
-      Console.WriteLine("Weight: {0} LBS", pounds);
+
+      if (s.IsConnected)
+      {
+        s.GetWeight(out weight, out isStable);
+        s.DebugScaleData();
+        Console.WriteLine("Weight: {0:0.00} LBS", weight);
+      } else {
+	Console.WriteLine("No Scale Connected.");
+      }
+
+      s.Disconnect();
       Thread.Sleep(5000);
     }
   }
