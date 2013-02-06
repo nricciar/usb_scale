@@ -8,69 +8,71 @@
  */
 namespace ScaleInterface
 {
-  using HIDLibrary;
+  using HidLibrary;
   using System.Threading;
   using System;
+  using System.Collections.Generic;
+  using System.Linq;
 
   class USBScale
   {
     public bool IsConnected
     {
       get {
-	return scale == null ? false : scale.IsConnected;
+        return scale == null ? false : scale.IsConnected;
       }
     }
     public decimal ScaleStatus
     {
       get {
-	return inData.Data[1];
+        return inData.Data[1];
       }
     }
     public decimal ScaleWeightUnits
     {
       get {
-	return inData.Data[2];
+        return inData.Data[2];
       }
     }
     private HidDevice scale;
     private HidDeviceData inData;
 
-    public HidDevice[] GetDevices ()
+    public HidDevice GetDevice ()
     {
-      HidDevice[] hidDeviceList;
+      HidDevice hidDevice;
       // Stamps.com Scale
-      hidDeviceList = HidDevices.Enumerate(0x1446, 0x6A73);
-      if (hidDeviceList.Length > 0)
-	return hidDeviceList;
+      hidDevice = HidDevices.Enumerate(0x1446, 0x6A73).FirstOrDefault();
+      if (hidDevice != null)
+        return hidDevice;
 
       // Metler Toledo
-      hidDeviceList = HidDevices.Enumerate(0x0eb8);
-      if (hidDeviceList.Length > 0)
-	return hidDeviceList;
+      hidDevice = HidDevices.Enumerate(0x0eb8).FirstOrDefault();
+      if (hidDevice != null)
+        return hidDevice;
 
-      return hidDeviceList;
+      return null;
     }
     public bool Connect ()
     {
       // Find a Scale
-      HidDevice[] deviceList = GetDevices();
-      if (deviceList.Length > 0)
-	return Connect(deviceList[0]);
+      HidDevice device = GetDevice();
+      if (device != null)
+        return Connect(device);
       else
-	return false;
+        return false;
     }
     public bool Connect (HidDevice device)
     {
       scale = device;
       int waitTries = 0;
-      scale.Open();
+      scale.OpenDevice();
 
       // sometimes the scale is not ready immedietly after
       // Open() so wait till its ready
       while (!scale.IsConnected && waitTries < 10)
       {
-	Thread.Sleep(50);
-	waitTries++;
+        Thread.Sleep(50);
+        waitTries++;
       }
       return scale.IsConnected;
     }
@@ -78,15 +80,15 @@ namespace ScaleInterface
     {
       if (scale.IsConnected)
       {
-	scale.Close();
-	scale.Dispose();
+        scale.CloseDevice();
+        scale.Dispose();
       }
     }
     public void DebugScaleData ()
     {
       for (int i = 0; i < inData.Data.Length; ++i)
       {
-	Console.WriteLine("Byte {0}: {1}", i, inData.Data[i]);
+        Console.WriteLine("Byte {0}: {1}", i, inData.Data[i]);
       }
     }
     public void GetWeight (out decimal? weight, out bool? isStable)
@@ -96,33 +98,33 @@ namespace ScaleInterface
 
       if (scale.IsConnected)
       {
-	inData = scale.Read(250);
-	// Byte 0 == Report ID?
-	// Byte 1 == Scale Status (1 == Fault, 2 == Stable @ 0, 3 == In Motion, 4 == Stable, 5 == Under 0, 6 == Over Weight, 7 == Requires Calibration, 8 == Requires Re-Zeroing)
-	// Byte 2 == Weight Unit
-	// Byte 3 == Data Scaling (decimal placement)
-	// Byte 4 == Weight LSB
-	// Byte 5 == Weight MSB
+        inData = scale.Read(250);
+        // Byte 0 == Report ID?
+        // Byte 1 == Scale Status (1 == Fault, 2 == Stable @ 0, 3 == In Motion, 4 == Stable, 5 == Under 0, 6 == Over Weight, 7 == Requires Calibration, 8 == Requires Re-Zeroing)
+        // Byte 2 == Weight Unit
+        // Byte 3 == Data Scaling (decimal placement)
+        // Byte 4 == Weight LSB
+        // Byte 5 == Weight MSB
 
-	// FIXME: dividing by 100 probably wont work with
-	// every scale, need to figure out what to do with
-	// Byte 3
-	weight = (Convert.ToDecimal(inData.Data[4]) + 
-	    Convert.ToDecimal(inData.Data[5]) * 256) / 100;
+        // FIXME: dividing by 100 probably wont work with
+        // every scale, need to figure out what to do with
+        // Byte 3
+        weight = (Convert.ToDecimal(inData.Data[4]) + 
+            Convert.ToDecimal(inData.Data[5]) * 256) / 100;
 
-	switch (Convert.ToInt16(inData.Data[2]))
-	{
-	  case 3:  // Kilos
-	    weight = weight * (decimal?)2.2;
-	    break;
-	  case 11: // Ounces
-	    weight = weight * (decimal?)0.625;
-	    break;
-	  case 12: // Pounds
-	    // already in pounds, do nothing
-	    break;
-	}
-	isStable = inData.Data[1] == 0x4;
+        switch (Convert.ToInt16(inData.Data[2]))
+        {
+          case 3:  // Kilos
+            weight = weight * (decimal?)2.2;
+            break;
+          case 11: // Ounces
+            weight = weight * (decimal?)0.625;
+            break;
+          case 12: // Pounds
+            // already in pounds, do nothing
+            break;
+        }
+        isStable = inData.Data[1] == 0x4;
       }
     }
   }
