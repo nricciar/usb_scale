@@ -8,3 +8,6 @@ Tested with the Mettler Toledo PS60 Scale (may work with other Mettler Toledo sc
 Should also support the Stamps.com USB Scale
 
 Other scale support should be possible by adding their vendor/product id to the GetDevices() method in the Scale.cs file.
+
+Example compilation:
+C:\usb_scale> c:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /t:exe /out:UsbScale.exe Example.cs Scale.cs /r:HidLibrary.dll

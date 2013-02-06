@@ -8,7 +8,7 @@
  *        */
 using System;
 using System.Threading;
-using HIDLibrary;
+using HidLibrary;
 using ScaleInterface;
 
 namespace ScaleReader
@@ -27,13 +27,11 @@ namespace ScaleReader
       {
         s.GetWeight(out weight, out isStable);
         s.DebugScaleData();
+        s.Disconnect();
         Console.WriteLine("Weight: {0:0.00} LBS", weight);
       } else {
-	Console.WriteLine("No Scale Connected.");
+        Console.WriteLine("No Scale Connected.");
       }
-
-      s.Disconnect();
-      Thread.Sleep(5000);
     }
   }
 }
