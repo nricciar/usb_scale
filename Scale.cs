@@ -102,15 +102,13 @@ namespace ScaleInterface
         // Byte 0 == Report ID?
         // Byte 1 == Scale Status (1 == Fault, 2 == Stable @ 0, 3 == In Motion, 4 == Stable, 5 == Under 0, 6 == Over Weight, 7 == Requires Calibration, 8 == Requires Re-Zeroing)
         // Byte 2 == Weight Unit
-        // Byte 3 == Data Scaling (decimal placement)
+        // Byte 3 == Data Scaling (decimal placement) - signed byte is power of 10
         // Byte 4 == Weight LSB
         // Byte 5 == Weight MSB
 
-        // FIXME: dividing by 100 probably wont work with
-        // every scale, need to figure out what to do with
-        // Byte 3
         weight = (Convert.ToDecimal(inData.Data[4]) + 
-            Convert.ToDecimal(inData.Data[5]) * 256) / 100;
+            Convert.ToDecimal(inData.Data[5]) * 256) *
+            Convert.ToDecimal(Math.Pow(10, (sbyte)inData.Data[3]))
 
         switch (Convert.ToInt16(inData.Data[2]))
         {
