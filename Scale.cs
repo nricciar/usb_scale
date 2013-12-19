@@ -108,7 +108,7 @@ namespace ScaleInterface
 
         weight = (Convert.ToDecimal(inData.Data[4]) + 
             Convert.ToDecimal(inData.Data[5]) * 256) *
-            Convert.ToDecimal(Math.Pow(10, (sbyte)inData.Data[3]))
+            Convert.ToDecimal(Math.Pow(10, (sbyte)inData.Data[3]));
 
         switch (Convert.ToInt16(inData.Data[2]))
         {
