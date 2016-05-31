@@ -116,7 +116,7 @@ namespace ScaleInterface
             weight = weight * (decimal?)2.2;
             break;
           case 11: // Ounces
-            weight = weight * (decimal?)0.625;
+            weight = weight * (decimal?)0.0625;
             break;
           case 12: // Pounds
             // already in pounds, do nothing
