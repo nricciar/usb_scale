@@ -69,16 +69,16 @@ namespace ScaleInterface
 
       // sometimes the scale is not ready immedietly after
       // Open() so wait till its ready
-      while (!scale.IsConnected && waitTries < 10)
+      while (!this.IsConnected && waitTries < 10)
       {
         Thread.Sleep(50);
         waitTries++;
       }
-      return scale.IsConnected;
+      return this.IsConnected;
     }
     public void Disconnect ()
     {
-      if (scale.IsConnected)
+      if (this.IsConnected)
       {
         scale.CloseDevice();
         scale.Dispose();
@@ -96,7 +96,7 @@ namespace ScaleInterface
       weight = null;
       isStable = false;
 
-      if (scale.IsConnected)
+      if (this.IsConnected)
       {
         inData = scale.Read(250);
         // Byte 0 == Report ID?
