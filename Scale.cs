@@ -106,10 +106,9 @@ namespace ScaleInterface
         // Byte 4 == Weight LSB
         // Byte 5 == Weight MSB
 
-        weight = (Convert.ToDecimal(inData.Data[4]) + 
-            Convert.ToDecimal(inData.Data[5]) * 256) *
-            Convert.ToDecimal(Math.Pow(10, (sbyte)inData.Data[3]));
-
+        weight = (decimal?)BitConverter.ToInt16(new byte[] { inData.Data[4], inData.Data[5] }, 0) *
+                         Convert.ToDecimal(Math.Pow(10, (sbyte)inData.Data[3]));
+              
         switch (Convert.ToInt16(inData.Data[2]))
         {
           case 3:  // Kilos
